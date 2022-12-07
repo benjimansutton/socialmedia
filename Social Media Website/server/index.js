@@ -1,5 +1,3 @@
-// Import statements for the packages for the application
-
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
@@ -12,7 +10,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
+import postRoutes from "./routes/post.js";
 import { register } from "./controllers/auth.js";
+import { createPost } from "./controllers/post.js";
+import { verifyToken } from "./middleware/auth.js";
 
 /* CONFIGURATIONS */
 
@@ -46,11 +47,13 @@ const upload = multer({ storage });
 /* ROUTES WITH FILE */
 
 // This is the middleware for updating the image to the temp storage before registering
-app.post("/auth/register", upload.single("picture"), register);                                                                                                                                                                                            
+app.post("/auth/register", upload.single("picture"), register);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);                                                                                                                                                                                         
 
 /* ROUTES */
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 
 /* MONGOOSE SETUP */
